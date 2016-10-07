@@ -16,4 +16,4 @@ go get -u github.com/90TechSAS/go-buffer-pool-recycler
 
 ## Example
 
-See the file ```example.go```
+See the file ```example/test.go```
