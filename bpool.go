@@ -49,6 +49,17 @@ func (p *Pool) Get() (b []byte) {
 */
 func (p *Pool) Put(b []byte) {
 	var buffer Buffer
+
+	// If buffer size is different of pool buffer size => dont keep it
+	if cap(b) != p.bufferSize {
+		return
+	}
+
+	// If buffer cap is different of buffer len => resize
+	if cap(b) != len(b) {
+		b = b[:cap(b)]
+	}
+
 	p.Lock()                 // Lock pool
 	defer p.Unlock()         // Unlock pool
 	buffer.slice = b         // Attach buffer in the Buffer struct
