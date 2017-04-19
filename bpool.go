@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+const (
+	CHAN_SIZE = 1000
+)
+
 /*
 	Buffer struct
 */
@@ -78,16 +82,16 @@ func (p *Pool) Put(b []byte) {
 func GetPool(bufferSize, expiration int) *Pool {
 	var pool Pool
 
-	pool.buffers = make(chan Buffer, 10000)                   // Make a huge channel to store buffers
+	pool.buffers = make(chan Buffer, CHAN_SIZE)               // Make a huge channel to store buffers
 	pool.bufferSize = bufferSize                              // Set the fixed size of buffers
 	pool.expiration = time.Second * time.Duration(expiration) // Set the expiration time of buffers
 
 	// Garbage collector goroutine
 	go func() {
 		for {
-			tmpChan := make(chan Buffer, 10000) // Make a huge temporary channel to store buffers
-			time.Sleep(time.Second)             // Sleep to avoid 100% CPU consumption
-			pool.Lock()                         // Lock pool
+			tmpChan := make(chan Buffer, CHAN_SIZE) // Make a huge temporary channel to store buffers
+			time.Sleep(time.Second)                 // Sleep to avoid 100% CPU consumption
+			pool.Lock()                             // Lock pool
 
 			if pool.length == 0 {
 				pool.Unlock() // Unlock pool
